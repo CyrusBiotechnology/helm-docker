@@ -1,11 +1,8 @@
-FROM busybox
+FROM alpine
 
-ENV HELM_VERSION=v2.7.2
-ENV PATH=$PATH:/opt/helm
-
-ADD https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz /tmp/helm.tar.gz
-
-RUN mkdir -p /opt/helm \
-  && tar xf /tmp/helm.tar.gz --strip-components=1 -C /opt/helm
+RUN apk add --no-cache curl bash openssl ca-certificates \
+  && curl -L https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash \
+  && apk del curl bash openssl \
+  && helm init -c
 
 ENTRYPOINT ["helm"]
